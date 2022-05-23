@@ -5,12 +5,13 @@ import argparse, importlib, traceback
 
 
 def show_success(test, browser):
-    print(Fore.GREEN+Style.BRIGHT+'%s SUCCESS :' %test['name'] + Style.RESET_ALL+' %s  in %s !\n' %(test['desc'], browser.name))
+    print(Fore.GREEN+Style.BRIGHT+'%s SUCCESS :' %test['name'] + Style.RESET_ALL+' %s  in %s !' %(test['desc'], browser.name))
+    print(Style.RESET_ALL)
 
 def show_failure(test, browser, debuginf):
-    print(Fore.WHITE+Back.RED+Style.BRIGHT+'%s FAILURE :'%test['name'] + Style.RESET_ALL+' %s  in %s !\n' %(test['desc'], browser.name))
-    print(debuginf)
-
+    print(Fore.WHITE+Back.RED+Style.BRIGHT+'%s FAILURE :'%test['name'] + Style.RESET_ALL+' %s  in %s !' %(test['desc'], browser.name))
+    print('DEBUG INFO:\n'+Back.WHITE+Fore.BLACK+debuginf)
+    print(Style.RESET_ALL)
 
 
 if __name__ == '__main__':
@@ -52,5 +53,3 @@ if __name__ == '__main__':
                 print('\n======> ERROR in your test file (%s)  <======\n\n %s' %(ARGS.testfile,traceback.format_exc()))
 
         browser.close()
-
-## https://www.guru99.com/execute-javascript-selenium-webdriver.html        

@@ -55,8 +55,8 @@ test_serie = [
         'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
     },          
     {   'name'      : 'params1',
-        'desc'      : """Trying that "/app1/user/123X" is routed to UserCtrl, method "userDetails",
-                         dynamic param uid=123, no param validation""",
+        'desc'      : """Trying that "/app1/user/123X" as "suckeleer" is routed to UserCtrl, method "userDetails",
+                         dynamic param uid=123X, no param validation""",
         'url'       : baseurl + '/app1/user/123X',
         'todos'     : [ {'function': change_role, 'args': ['suckeleer']},
                         {'function': wait_for_router_ready, 'args': []} 
@@ -66,15 +66,27 @@ test_serie = [
         'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
     }, 
     {   'name'      : 'params2',
-        'desc'      : """Trying that "/app1/user/123X" is routed to UserCtrl, method "userDetails", 
-                         dynamic param uid=123 + fixed param, no param validation""",
+        'desc'      : """Trying that "/app1/user/123X" as "dikkenek" is routed to UserCtrl, method "userDetails", 
+                         dynamic param uid=123X + fixed param, no param validation""",
         'url'       : baseurl + '/app1/user/123X',
         'todos'     : [ {'function': change_role, 'args': ['dikkenek']},
                         {'function': wait_for_router_ready, 'args': []},                          
                       ],
         'check'     : lambda browser: ('Called userDetails' in browser.find_element_by_css_selector('body').text) 
-                                  and ( '"uid":"123' in browser.find_element_by_css_selector('body').text)
+                                  and ( '"uid":"123X' in browser.find_element_by_css_selector('body').text)
                                   and ( '"extended":true' in browser.find_element_by_css_selector('body').text),
         'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
     },     
+    {   'name'      : 'params3',
+        'desc'      : """Trying that "/app1/user/123X" as "denbaas" fails on param validation, and therefore ends up in default 
+                         with proper err msg.""",
+        'url'       : baseurl + '/app1/user/123X',
+        'todos'     : [ {'function': change_role, 'args': ['denbaas']},
+                        {'function': wait_for_router_ready, 'args': []},                          
+                      ],
+        'check'     : lambda browser: ('Called userDetails' in browser.find_element_by_css_selector('body').text) 
+                                  and ( '"uid":"123X' in browser.find_element_by_css_selector('body').text)
+                                  and ( '"extended":true' in browser.find_element_by_css_selector('body').text),
+        'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
+    }, 
 ]    
