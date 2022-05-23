@@ -1,30 +1,23 @@
 #!/usr/bin/env python
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
 from colorama import init, Fore, Back, Style
 import argparse, importlib, traceback
 
-def check_route_ready(browser):
-    return browser.execute_script('return window.Router.route_ready;')
-
-def wait_for_router_ready(browser):
-    WebDriverWait(browser, 5).until(check_route_ready)
 
 def show_success(test, browser):
-    print(Fore.GREEN+Style.BRIGHT+'SUCCESS :'+Style.RESET_ALL+' %s  in %s !\n' %(test['name'], browser.name))
+    print(Fore.GREEN+Style.BRIGHT+'%s SUCCESS :' %test['name'] + Style.RESET_ALL+' %s  in %s !\n' %(test['desc'], browser.name))
 
 def show_failure(test, browser, debuginf):
-    print(Fore.WHITE+Back.RED+Style.BRIGHT+'FAILURE :'+Style.RESET_ALL+' %s  in %s !\n' %(test['name'], browser.name))
+    print(Fore.WHITE+Back.RED+Style.BRIGHT+'%s FAILURE :'%test['name'] + Style.RESET_ALL+' %s  in %s !\n' %(test['desc'], browser.name))
     print(debuginf)
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Front-end UI tester\n\nUsage: uitester --chrome --firefox testfile')
-    parser.add_argument('--chrome', action='store_true')
-    parser.add_argument('--firefox', action='store_true')
+    parser.add_argument('--chrome', action='store_true', help='test in Chrome')
+    parser.add_argument('--firefox', action='store_true', help='test in Firefox')
+    parser.add_argument('--single', help='Name of the single test to make (if not present, performs all)')
     parser.add_argument('testfile', action='store', help='Test serie (python file in folder tests)')
     ARGS = parser.parse_args()
 
@@ -39,12 +32,17 @@ if __name__ == '__main__':
     if ARGS.firefox:
         browsers.append(webdriver.Firefox())
 
+    if ARGS.single:
+        tests = list(filter(lambda t: t['name']==ARGS.single, ts.test_serie))
+    else:
+        tests = ts.test_serie
 
     for browser in browsers:
-        for test in ts.test_serie:
+        for test in tests:
             try:
                 browser.get(test['url'])
-                wait_for_router_ready(browser)
+                for todo in test['todos']:
+                    todo['function'](browser, *todo['args'])     
                 if callable(test['check']):
                     if test['check'](browser):
                         show_success(test, browser)
