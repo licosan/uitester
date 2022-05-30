@@ -14,10 +14,13 @@ def launch_router(browser, role):
     WebDriverWait(browser, 5).until(chrl)
 
 def check_for_class(browser, classname):
-    return browser.execute_script('return app.LoadedClasses.hasOwnProperty(arguments[0]);', classname)
+    return browser.execute_script('return(app.LoadedClasses.hasOwnProperty(arguments[0]));', classname)
 
 def show_var(browser, varname):
     return '%s' %browser.execute_script("""return(%s);""" %varname)
+
+def router_makelink(browser, ctrl, meth, params):
+    return browser.execute_script("""return(window.Router.makelink('%s','%s',%s));""" %(ctrl, meth, params))
 
 
 test_serie = [
@@ -151,5 +154,24 @@ test_serie = [
                       ],
         'check'     : lambda browser: check_for_class(browser, 'userHelper'),
         'debuginfo' : lambda browser: show_var(browser, 'app'),
-    },       
+    },  
+    {   'name'      : 'makelink1',
+        'desc'      : """Trying if makelink('app1/app1MainCtrl','home',{}) gives "/app1"  """,
+        'url'       : baseurl + '/',
+        'todos'     : [ {'function': launch_router, 'args': ['toto']},
+                        {'function': wait_for_router_ready, 'args': []},
+                      ],
+        'check'     : lambda browser: router_makelink(browser, 'app1/app1MainCtrl','home','{}') == '/app1',
+        'debuginfo' : lambda browser: router_makelink(browser, 'app1/app1MainCtrl','home','{}'),
+    },          
+    {   'name'      : 'makelink2',
+        'desc'      : """Trying if makelink('/common/User/UserCtrl','userDetails',{'uid':'789'}) gives "/app1/user/789"  """,
+        'url'       : baseurl + '/',
+        'todos'     : [ {'function': launch_router, 'args': ['dikkenek']},
+                        {'function': wait_for_router_ready, 'args': []},
+                      ],
+        'check'     : lambda browser: router_makelink(browser, '/common/User/UserCtrl','userDetails',"""{'uid':'789'}""") == '/app1/user/789',
+        'debuginfo' : lambda browser: 'result:'+router_makelink(browser, '/common/User/UserCtrl','userDetails',"""{'uid':'789'}"""),
+    },  
+
 ]    
