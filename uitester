@@ -6,12 +6,13 @@ import argparse, importlib, traceback
 
 def show_success(test, browser):
     print(Fore.GREEN+Style.BRIGHT+'%s SUCCESS :' %test['name'] + Style.RESET_ALL+' %s  in %s !' %(test['desc'], browser.name))
-    print(Style.RESET_ALL)
+    print(Style.RESET_ALL+('-'*100))
 
-def show_failure(test, browser, debuginf):
+def show_failure(test, browser, debuginf=None):
     print(Fore.WHITE+Back.RED+Style.BRIGHT+'%s FAILURE :'%test['name'] + Style.RESET_ALL+' %s  in %s !' %(test['desc'], browser.name))
-    print('DEBUG INFO:\n'+Back.WHITE+Fore.BLACK+debuginf)
-    print(Style.RESET_ALL)
+    if debuginf:
+        print('DEBUG INFO:\n'+Back.WHITE+Fore.BLACK+debuginf)
+    print(Style.RESET_ALL+('-'*100))
 
 
 if __name__ == '__main__':
@@ -48,7 +49,10 @@ if __name__ == '__main__':
                     if test['check'](browser):
                         show_success(test, browser)
                     else:
-                        show_failure(test, browser, test['debuginfo'](browser))
+                        if ('debuginfo' in test) and callable(test['debuginfo']): 
+                            show_failure(test, browser, test['debuginfo'](browser))
+                        else:
+                            show_failure(test, browser)
             except Exception as e:
                 print('\n======> ERROR in your test file (%s)  <======\n\n %s' %(ARGS.testfile,traceback.format_exc()))
 
