@@ -6,12 +6,12 @@ def check_route_ready(browser):
     return browser.execute_script('return window.Router.route_ready;')
 
 def wait_for_router_ready(browser):
-    WebDriverWait(browser, 5).until(lambda browser: browser.execute_script('return window.Router.route_ready;'))
+    WebDriverWait(browser, 10).until(lambda browser: browser.execute_script('return window.Router.route_ready;'))
 
 def launch_router(browser, role):
     def chrl(browser):
         return(browser.execute_script('route(arguments[0]);return(true);', role));
-    WebDriverWait(browser, 5).until(chrl)
+    WebDriverWait(browser, 10).until(chrl)
 
 def check_for_class(browser, classname):
     return browser.execute_script('return(app.LoadedClasses.hasOwnProperty(arguments[0]));', classname)
@@ -21,6 +21,12 @@ def show_var(browser, varname):
 
 def router_makelink(browser, ctrl, meth, params):
     return browser.execute_script("""return(window.Router.makelink('%s','%s',%s));""" %(ctrl, meth, params))
+
+
+def wait_for_correct_current_url(browser, target_url):
+    WebDriverWait(browser, 10).until(
+        lambda driver: browser.current_url == target_url)
+
 
 
 test_serie = [
@@ -173,5 +179,13 @@ test_serie = [
         'check'     : lambda browser: router_makelink(browser, '/common/User/UserCtrl','userDetails',"""{'uid':'789'}""") == '/app1/user/789',
         'debuginfo' : lambda browser: 'result:'+router_makelink(browser, '/common/User/UserCtrl','userDetails',"""{'uid':'789'}"""),
     },  
-
+    {   'name'      : 'external',
+        'desc'      : """Trying if "/extapp/proposal/999/reviews/888" reloads the page to external URL with parameters """,
+        'url'       : baseurl + '/extapp/proposal/999/reviews/888',
+        'todos'     : [ {'function': launch_router, 'args': ['expert']},
+                        {'function': wait_for_correct_current_url, 'args': ['https://www.internike.com/printenv.php?pid=999&rid=888']},
+                      ],
+        'check'     : lambda browser: browser.current_url == 'https://www.internike.com/printenv.php?pid=999&rid=888',
+        'debuginfo' : lambda browser: browser.current_url+'\n'+browser.find_element_by_css_selector('body').text,
+    },  
 ]    
