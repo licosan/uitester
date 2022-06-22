@@ -3,10 +3,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 baseurl = 'https://eismea.internike.com'
 
 def check_route_ready(browser):
-    return browser.execute_script('return window.Router.route_ready;')
+    return browser.execute_script('return app.Router.route_ready;')
 
 def wait_for_router_ready(browser):
-    WebDriverWait(browser, 10).until(lambda browser: browser.execute_script('return window.Router.route_ready;'))
+    WebDriverWait(browser, 10).until(lambda browser: browser.execute_script('return app.Router.route_ready;'))
 
 def launch_router(browser, role):
     def chrl(browser):
@@ -20,7 +20,7 @@ def show_var(browser, varname):
     return '%s' %browser.execute_script("""return(%s);""" %varname)
 
 def router_makelink(browser, ctrl, meth, params):
-    return browser.execute_script("""return(window.Router.makelink('%s','%s',%s));""" %(ctrl, meth, params))
+    return browser.execute_script("""return(app.Router.makelink('%s','%s',%s));""" %(ctrl, meth, params))
 
 
 def wait_for_correct_current_url(browser, target_url):
