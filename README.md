@@ -74,3 +74,31 @@ Now launch the test your created (the python definition script you saved in the 
 ```sh
 ./uitester --help./uitester --firefox --chrome my_test
 ```
+
+## TEST FILES
+A test file is a python script that mainly defines a list called **test_serie**
+Elements of that list are dictionaries of the form:
+```python
+    {   'name'      : 'test1',
+        'desc'      : """The first test ever.""",
+        'url'       :'https://mydomain/app1/user/123X',
+        'todos'     : [ {'function': launch_js_action, 'args': ['toto']},                        
+                      ],
+        'check'     : lambda browser: ('helloworld' in browser.find_element_by_css_selector('body').text),
+        'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
+    },   
+```
+**name** is the shortname of this particular test. 
+It is used when you call uitester with "--single" to launch only that test instead of the whole serie.
+
+**desc** is the long description of this test. Displayed when the test fails. (Therefore, be cool with others or your future-self:
+Explain precisely in what was tested & how)
+
+**url** the url that will be fetched. As this is a UI tester, only GET is foreseen for now.
+
+**todos** a list of actions that will be performed before the check is made. 
+this is the place you trigger wait for things to happen on the page, you make fake user actions (like click somewhere), 
+you launch javascript code, or wait for javascript results.
+Each action is of the form: {'function': myfunc, 'args': [arg2, arg3]}
+The first argument of the function is always the selenium browser instance (on which you call selenium methods), then eventual other parguments passed in args.
+
