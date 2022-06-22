@@ -36,8 +36,9 @@ Each test entry has :
               He you typically want to show if a DOM element was found or not, show fragments of html, or some javascript values.
 
 ## INSTALL
-**Prerequisites:** python3, virtualenv & Pip3 
+**Prerequisites (Linux):** python3, virtualenv, pip3, /usr/bin/env
 
+Clone the rep, and make your virtualenv
 ```sh
 git clone git@github.com:licosan/uitester.git
 cd uitester
@@ -45,3 +46,31 @@ virtualenv -p python3 pyvenv
 . ./pyvenv/bin/activate
 ```
 
+Now check you are in python3 (min 3.6)
+```sh
+python -V
+```
+Now install uitester required libs:
+```sh
+pip install -r requirements.txt
+```
+To be able to test with Firefox, you need to install geckodriver (see: https://github.com/mozilla/geckodriver)
+```sh
+sudo apt-get install firefox-geckodriver
+```
+ 
+To be able to test with Chrome, you need to install chromedriver (see: https://chromedriver.chromium.org/downloads)
+```sh 
+ sudo apt-get install chromium-chromedriver
+```
+
+You should now be ready to go...
+First check the script is launching properly (won't yet use a browser web driver)
+```sh
+./uitester --help
+```
+
+Now launch the test your created (the python definition script you saved in the tests folder) with one or both browsers:
+```sh
+./uitester --help./uitester --firefox --chrome my_test
+```
