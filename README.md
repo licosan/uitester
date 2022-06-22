@@ -100,5 +100,46 @@ Explain precisely in what was tested & how)
 this is the place you trigger wait for things to happen on the page, you make fake user actions (like click somewhere), 
 you launch javascript code, or wait for javascript results.
 Each action is of the form: {'function': myfunc, 'args': [arg2, arg3]}
-The first argument of the function is always the selenium browser instance (on which you call selenium methods), then eventual other parguments passed in args.
+The first argument of the function is always the selenium browser instance (on which you call selenium methods), then eventual other parguments passed in args. You'll find some cool functions in the boilerplate example below ...
+
+**check** a function (often a lambda) receiving the selenium browser instance, that shall return True if the test succeeds
+
+**debuginfo** a function (often a lambda) receiving the selenium browser instance, that shall return a string containing some debug info, displayed when the test fails, to help understand why. Showing the source of the page is a basic typical example, but you could also dump some javascript variables for example.
+
+## TEST FILE Example / Boilerplate
+```python
+from selenium.webdriver.support.ui import WebDriverWait
+
+baseurl = 'https://www.mydomain.com'
+
+def check_js_variable_true(browser):
+    return browser.execute_script('return myvariable;')
+
+def wait_js_variable_true(browser):
+    WebDriverWait(browser, 10).until(lambda browser: browser.execute_script('return myvariable;'))
+
+def launch_js_function(browser, myarg):
+    def chrl(browser):
+        return(browser.execute_script('myfunc(arguments[0]);return(true);', myarg));
+    WebDriverWait(browser, 10).until(chrl)
+
+def show_var(browser, varname):
+    return '%s' %browser.execute_script("""return(%s);""" %varname)
+
+
+def wait_for_correct_current_url(browser, target_url):
+    WebDriverWait(browser, 10).until(
+        lambda driver: browser.current_url == target_url)
+
+test_serie = [
+    {   'name'      : 'test1',
+        'desc'      : """The first test, well described ;-) """,
+        'url'       : baseurl + '/helloworld',
+        'todos'     : [  {'function': wait_for_correct_current_url, 'args': ['https://www.mydomain.com/login']}, ]
+        'check'     : lambda browser: 'Please login' in browser.find_element_by_css_selector('body').text,
+        'debuginfo' : lambda browser: 'Content: %s\n' %browser.find_element_by_css_selector('body').text,
+    },
+]    
+
+```
 
