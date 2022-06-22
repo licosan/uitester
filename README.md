@@ -35,3 +35,13 @@ Each test entry has :
 - **debuginfo** : A function that will be called when the test fails, to get a text displayed as debugging information.
               He you typically want to show if a DOM element was found or not, show fragments of html, or some javascript values.
 
+## INSTALL
+**Prerequisites:** python3, virtualenv & Pip3 
+
+```sh
+git clone git@github.com:licosan/uitester.git
+cd uitester
+virtualenv -p python3 pyvenv
+. ./pyvenv/bin/activate
+```
+
